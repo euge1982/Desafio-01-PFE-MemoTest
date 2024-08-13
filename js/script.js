@@ -1,93 +1,103 @@
-const cards = document.querySelectorAll('.card'); // Selecciona todas las tarjetas
-let flippedCards = []; // Array para almacenar las tarjetas volteadas
-let matchedPairs = 0; // Contador de pares coincidentes
-const totalPairs = 6; // Número total de pares en el juego
+const cards = document.querySelectorAll('.card');   //Selecciona todas las tarjetas
+let cardsVolteadas = [];   //Array para almacenar las tarjetas volteadas
+let paresArmados = 0;   //Contador de pares coincidentes
+const totalPares = 6;   //Número total de pares en el juego
 
-// Inicializa el juego
-function initializeGame() {
-    const numbers = generateNumbers(); // Genera los números para las tarjetas
-    assignNumbersToCards(numbers); // Asigna los números a las tarjetas
+//Inicializa el juego
+function jugar() {
+    const numeros = generarNumeros();   //Genera los numeros para las tarjetas
+    asignar(numeros);   //Asigna los numeros a las tarjetas
+
+    //Para que cada tarjeta tenga el evento click asignado
     cards.forEach(card => {
-        card.addEventListener('click', () => flipCard(card)); // Agrega el evento de clic a cada tarjeta
+        card.addEventListener('click', manejoDeClick);
     });
 }
 
-// Genera un array con números del 0 al 5, duplicados
-function generateNumbers() {
-    return [...Array(totalPairs).keys(), ...Array(totalPairs).keys()];
+//Genera un array con numeros del 0 al 5, duplicados
+function generarNumeros() {
+    return [...Array(totalPares).keys(), ...Array(totalPares).keys()];
 }
 
-// Asigna números aleatorios a las tarjetas
-function assignNumbersToCards(numbers) {
-    shuffle(numbers).forEach((number, index) => {
-        cards[index].dataset.number = number; // Asigna un número a cada tarjeta
-        cards[index].textContent = ''; // Asegúrate de que el texto esté vacío al inicio
+//Asigna numeros aleatorios a las tarjetas
+function asignar(numeros) {
+    mezclar(numeros).forEach((numero, index) => {
+        cards[index].dataset.numero = numero;   //Asigna un numero a cada tarjeta
+        cards[index].textContent = '';   //Asegura que el texto este vacio al inicio
     });
 }
 
-// Mezcla un array usando el algoritmo de Fisher-Yates
-function shuffle(array) {
-    let currentIndex = array.length;
+//Se mezcla el array usando el algoritmo de Fisher-Yates
+function mezclar(array) {
+    let currentIndex = array.length;   //Empieza de atras hacia adelante
     while (currentIndex !== 0) {
-        const randomIndex = Math.floor(Math.random() * currentIndex);
+        const randomIndex = Math.floor(Math.random() * currentIndex);   //Calcula el indice de manera random(devuelve entre 0 y 1, se multiplca por currentIndex, y se abtiene con floorla parte entera) 
         currentIndex--;
         [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
     return array;
 }
 
-// Voltea una tarjeta y verifica si hay coincidencias
-function flipCard(card) {
-    if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
-        card.classList.add('flipped');
-        card.textContent = card.dataset.number; // Muestra el número en la tarjeta
-        flippedCards.push(card);
+//Maneja el clic en una tarjeta
+function manejoDeClick() {
+    voltear(this);   //Llama a voltear(cardClickeada)
+}
 
-        if (flippedCards.length === 2) {
-            checkMatch(); // Verifica si las dos tarjetas volteadas coinciden
+//Voltea una card y verifica si hay coincidencias
+function voltear(card) {
+    if (cardsVolteadas.length < 2 && !card.classList.contains('volteada')) {
+        card.classList.add('volteada');   //Le pone volteada a la card
+        card.textContent = card.dataset.numero;   //Muestra el numero en la tarjeta
+        cardsVolteadas.push(card);
+
+        if (cardsVolteadas.length === 2) {
+            checkMatch();   //Verifica si las dos tarjetas volteadas coinciden
         }
     }
 }
 
-// Verifica si las dos tarjetas volteadas coinciden
+//Verifica si las dos tarjetas volteadas coinciden
 function checkMatch() {
-    const [card1, card2] = flippedCards;
+    const [card1, card2] = cardsVolteadas;
 
-    if (card1.dataset.number === card2.dataset.number) {
+    if (card1.dataset.numero === card2.dataset.numero) {
         card1.classList.add('match');
         card2.classList.add('match');
-        matchedPairs++;
-        // Verifica si se han encontrado todos los pares
-        if (matchedPairs === totalPairs) {
-            
-            document.getElementById('message').textContent = '¡Felicidades! Has completado el juego.';
+        paresArmados++;
+        //Verifica si se encontraron todos los pares
+        if (paresArmados === totalPares) {
+            document.getElementById('mensaje').textContent = 'Felicidades!!! GANASTE!!!';
         }
     } else {
-        // Si no coinciden, oculta los números después de un breve retraso
+        //Si no coinciden, oculta los numeros despues de un tiempo dado
         setTimeout(() => {
-            card1.classList.remove('flipped');
-            card2.classList.remove('flipped');
+            card1.classList.remove('volteada');
+            card2.classList.remove('volteada');
             card1.textContent = '';
             card2.textContent = '';
         }, 1000);
     }
-    flippedCards = []; // Resetea el array de tarjetas volteadas
+    cardsVolteadas = [];   //Resetea el array de tarjetas volteadas
 }
 
-// Reinicia el juego
-function restartGame() {
-    flippedCards.forEach(card => {
-        card.classList.remove('flipped', 'match');
+//Reinicia el juego
+function reiniciarJuego() {
+    
+    //Resetea todas las tarjetas
+    cards.forEach(card => {
+        card.classList.remove('volteada', 'match');
         card.textContent = '';
     });
-    flippedCards = [];
-    matchedPairs = 0;
-    initializeGame(); // Reinicia el juego
+    cardsVolteadas = [];
+    paresArmados = 0;
+    document.getElementById('mensaje').textContent = '';
+
+    // Vuelve a inicializar el juego
+    jugar();
 }
 
 // Inicializa el juego al cargar la página
-initializeGame();
+jugar();
 
 // Agrega el evento de clic al botón de reinicio
-document.getElementById('restart-button').addEventListener('click', restartGame);
-
+document.getElementById('reiniciar').addEventListener('click', reiniciarJuego);

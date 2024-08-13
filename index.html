@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juego de Memoria</title>
+    <title>MemoTest</title>
+    <link rel="shortcut icon" href="assets/icono.png" type="image/x-icon">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>Juego de Memoria</h1>
-    <div class="game-container">
-        <!-- Cada tarjeta tiene un atributo data-number que determina su valor -->
+    <h1>MEMOTEST</h1>
+
+    <!--En este contenedor se muestran las cartas-->
+    <div class="contenedor">
+        <!--El atributo data-number de cada tarjeta es el que da su valor-->
         <div class="card" data-number="0"></div>
         <div class="card" data-number="1"></div>
         <div class="card" data-number="2"></div>
@@ -23,8 +26,13 @@
         <div class="card" data-number="4"></div>
         <div class="card" data-number="5"></div>
     </div>
-    <div id="message"></div>
-    <button id="restart-button">Reiniciar Juego</button>
+
+    <!--En este div se muestra el mensaje cuando se gana el juego-->
+    <div id="mensaje"></div>
+    
+    <!--Boton para reiniciar el juego cuando se termina--> 
+    <button id="reiniciar">Reiniciar Juego</button>
+
     <script src="/js/script.js"></script>
 </body>
 </html>
